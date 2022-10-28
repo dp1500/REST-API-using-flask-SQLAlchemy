@@ -16,9 +16,9 @@ api = Api(app)
 api.init_app(app)
 app.app_context().push()
 
-from apii import CourseApi,student
+from apii import CourseApi,StudentApi
 
-api.add_resource(student, "/api/student/<int:student_id>")
+api.add_resource(StudentApi, "/api/student", "/api/student/<int:studentId>")
 api.add_resource(CourseApi, "/api/course","/api/course/<int:courseId>")
 
 if __name__ == '__main__':
@@ -28,17 +28,4 @@ if __name__ == '__main__':
     debug=True,
     port=8080
   )
-
-
-
-
-
-
-
-
-
-
-
-
-
 

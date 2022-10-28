@@ -7,6 +7,13 @@ class Course(db.Model):
     course_name = db.Column(db.String, nullable = False)
     course_description = db.Column(db.String)
 
+    def _init_(self, course_code, course_name, course_description):
+        self.course_code = course_code
+        self.course_name = course_name
+        self.course_description = course_description
+        
+        
+
 class Student(db.Model):
     __tablename__ = 'student'
     student_id = db.Column(db.Integer, autoincrement = True, primary_key = True)
