@@ -1,5 +1,5 @@
 from flask_restful import Resource, fields, marshal_with,reqparse
-from models import Course, Student
+from models import Course, Student, Enrollments
 from database import db
 from validation import *
 
@@ -151,4 +151,54 @@ class StudentApi(Resource):
             return "Successfully Deleted", 200
         else:
             return "student not found", 404
+
+
+enrollement_parser = reqparse.RequestParser()
+enrollement_parser.add_argument('courseID')
+ 
+class EnrollementsApi(Resource):
+    def get(self, studentId):
+        if type(studentId) == int:
+            enrollement = db.session.query(Enrollments).filter(Enrollments.estudent_id == studentId).first()
+            if enrollement:
+                return [ { "enrollment_id": enrollement.enrollment_id, "student_id": enrollement.estudent_id, "course_id": enrollement.ecourse_id } ], 200
+
+            else:
+                return "Student is not enrolled in any course",404
+        else:
+            raise BusinessValidationError(status_code= 400, error_code=	"string", error_message= "string")
+            
+    
+    def post(self,studentId):
+        args =enrollement_parser.parse_args()
+        courseID = args.get("courseID", None) 
+        
+        student = db.session.query(Student).filter(Student.student_id == studentId).first()
+        if student:
+            # print(courseID)
+            course = db.session.query(Course).filter(Course.course_id == courseID).first()
+            if course:
+                new_enrollement = Enrollments(estudent_id = studentId, ecourse_id = courseID)
+                db.session.add(new_enrollement)
+                db.session.commit()
+                return [ { "enrollment_id": new_enrollement.enrollment_id, "student_id": new_enrollement.estudent_id, "course_id": new_enrollement.ecourse_id } ], 201
+
+
+            else:
+                raise BusinessValidationError(status_code= 404, error_code=	"ENROLLMENT001", error_message= "Course does not exist.")
+            
+        else:
+            raise BusinessValidationError(status_code= 404, error_code=	"ENROLLMENT002", error_message= "Student does not exist.")
+            
+    def delete(self, studentId,courseId):
+        if studentId == None or courseId == None:
+            raise BusinessValidationError(status_code= 400, error_code=	"string", error_message= "string")
+            
+        enrollement = db.session.query(Enrollments).filter((Enrollments.estudent_id == studentId) & (Enrollments.ecourse_id == courseId)).first()
+        if enrollement:
+            db.session.delete(enrollement)
+            db.session.commit()
+            return "Successfully Deleted", 200
+        else:
+            return "Enrollment for the student not found", 404
         

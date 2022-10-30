@@ -1,1 +1,1 @@
-app.app_context().push()
+/api/student/<int:studentId>/course

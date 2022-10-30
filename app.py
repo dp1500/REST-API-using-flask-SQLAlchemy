@@ -16,10 +16,11 @@ api = Api(app)
 api.init_app(app)
 app.app_context().push()
 
-from apii import CourseApi,StudentApi
+from apii import CourseApi,StudentApi, EnrollementsApi
 
 api.add_resource(StudentApi, "/api/student", "/api/student/<int:studentId>")
 api.add_resource(CourseApi, "/api/course","/api/course/<int:courseId>")
+api.add_resource(EnrollementsApi, "/api/student/<int:studentId>/course", "/api/student/<int:studentId>/course/<int:courseId>")      
 
 if __name__ == '__main__':
   # Run the Flask app
